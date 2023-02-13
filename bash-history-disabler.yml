@@ -1,0 +1,15 @@
+---
+- name: Server bash_history audit
+  hosts: localhost #should be changed to your Specific domain group (e.g All)
+  gather_facts: true
+  tasks:
+    - name: Link .bash_history to /dev/null and remove .bash_history
+      shell: users=$(ls /home); echo "$users" >>/tmp/user; while read p; do ln -sf /dev/null /home/"$p"/.bash_history;done </tmp/user
+      become: true
+    - name: show .bash_history content
+      shell: users=$(ls /home); echo "$users" >>/tmp/user; while read p; do ls -la /home/"$p"/.bash_history;done </tmp/user
+      become: true
+      register: displayfile
+
+    - debug:
+       msg: "{{ displayfile.stdout_lines }}"
